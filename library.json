@@ -1,0 +1,25 @@
+{
+    "name": "Logger",
+    "version": "0.1.0",
+    "description": "Multichanel logger finction with formatter and runtime filter.",
+    "keywords": "log logging arduino atmega",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/abel-msk/Logger.git"
+    },
+    "authors":
+    [
+      {
+        "name": "Artyom Belyaev",
+        "email": "Artem.Belyaev@gmail.com"
+      }
+    ],
+    "license": "Apache 2.0",
+    "homepage": "https://github.com/abel-msk/Logger",
+    "dependencies": {
+        "BinTreeStore": "~0.1.0"
+      },
+    "frameworks": "*",
+    "platforms": "*"
+  }
