@@ -144,6 +144,13 @@ int main(void) {
     Logger logprint("MAIN");
 
     logprint.error("ERROR string log out.");
+    std::cout << "==============  Hide ERROR" << std::endl;
+    logFactory.setFilter("MAIN",LogLevel::ERROR,false);
+    logprint.error("ERROR Hide string.");
+    std::cout << "==============  Show DEBUG" << std::endl;
+    logFactory.setFilter("MAIN",LogLevel::DEBUG,true);
+    logprint.debug("Print string.");
+
     logprint.debug("Print DEBUG");
     logprint.info("Print INFO");
     std::cout << "==============  Finish ==============" << std::endl;

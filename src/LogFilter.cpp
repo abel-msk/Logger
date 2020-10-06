@@ -88,7 +88,7 @@ void LogFilter::setFilterEX(const char* classNameRX, LogLevel level, bool value)
 /**
  * Select node with defined class name ans defined level
  * 
- * @param className  Class name
+ * @param clName  Class name
  * @param level Log level
  * @return TRUE if selected class name with level  is market for show
  */

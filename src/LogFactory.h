@@ -25,6 +25,8 @@ class LogFactory {
     void setChannelFormat(const char* chName, const char* formatString = NULL);
 
     void addClass(const char* clName);
+    int setChFilter(const char* chName, const char* clName, LogLevel level, bool isShow );
+    void setFilter(const char* clName, LogLevel level, bool isShow );
 
     int print(const char* clName, LogLevel level, const char* mesage);
 

@@ -1,11 +1,9 @@
 #include "LogFactory.h"
 
-
-// LogFactory::LogFactory() {
-//     formatSrt = "%date% [%level%] %clname%: %msg%";
-
-// }
-
+/**
+ * Main class for controll logging classes channels, formatting etc.
+ * 
+ */
 LogFactory::LogFactory(bool useConsole) {
     formatSrt = "%date% [%level%] %clname%: %msg%";
 
@@ -16,33 +14,43 @@ LogFactory::LogFactory(bool useConsole) {
     }
 }
 
-
 LogFactory::~LogFactory() { }
 
+/**
+ * Add new channel to stack
+ * @param Channel class 
+ */
 LogChannel* LogFactory::addChannel(LogChannel* channel) {
     chList.PushBack(channel);
     return channel;
 }
 
 
-
+/**
+ * 
+ * Remove channel from stack
+ * @param chName Channel name
+ * @return
+ *      0 - Channel removed
+ *      1 - Channel not found
+ */
 int LogFactory::delChannel(const char* chName) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
         if (strcmp(it.Item()->getName(),chName) == 0) {
             chList.Remove(it);
-            return 1;
+            return 0;
         }
         ++it;
 	}
-    return 0;
+    return 1;
 }
 
-
-    // // int setChannelOFF(const char* chName);
-    // // int setChannelON(const char* chName);
-
-
+/**
+ *  Set channel output format string
+ *  @param chNname channel name
+ *  @param formatString format string. See @link LogFormat
+ */
 void LogFactory::setChannelFormat(const char* chName, const char* formatString) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
@@ -54,6 +62,11 @@ void LogFactory::setChannelFormat(const char* chName, const char* formatString) 
 	}
 }
 
+/**
+ * Add class to all channels with default show values
+ * @param clName  class name
+ * 
+ */
 void LogFactory::addClass(const char* clName) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
@@ -62,6 +75,13 @@ void LogFactory::addClass(const char* clName) {
 	}
 }
 
+/**
+ * Print out message in each channel (depend of filter settings)
+ * @param clName class name 
+ * @param LogLevel log level
+ * @param message message to print
+ * 
+ */
 int LogFactory::print(const char* clName, LogLevel level, const char* message) {
     int ret = 0;
     LinkedList::iterator it = chList.begin();
@@ -72,6 +92,44 @@ int LogFactory::print(const char* clName, LogLevel level, const char* message) {
     return ret;
 }
 
+/**
+ * Set filter on specifyed channel
+ * @param chName the channel name
+ * @param clName class name 
+ * @param LogLevel log level
+ * @param isShow fiter value. True - print mrssage in channel; False - do not print out
+ * @return 
+ *      1 - channel no found
+ *      0 - filter was set
+ */
+int LogFactory::setChFilter(const char* chName, const char* clName, LogLevel level, bool isShow ) {
+    LinkedList::iterator it = chList.begin();
+    while (it.Valid()) {
+        if (strcmp(it.Item()->getName(),chName) == 0) {
+            LogChannel* channel = it.Item();
+                it.Item()->setFilter(clName,level,isShow);
+                return 0;
+        }
+        ++it;
+	}
+    return 1;
+}
+
+/**
+ *   Set filter in each channel
+ * @param clName class name 
+ * @param LogLevel log level
+ * @param isShow fiter value. True - print mrssage in channel; False - do not print out
+ * 
+ */
+void LogFactory::setFilter(const char* clName, LogLevel level, bool isShow ) {
+    LinkedList::iterator it = chList.begin();
+    while (it.Valid()) {
+        it.Item()->setFilter(clName,level,isShow);
+        ++it;
+    }
+    return;
+}
 
 
 LogFactory logFactory;
