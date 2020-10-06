@@ -2,20 +2,33 @@
 #define LOG_FACTRY_H_
 #include "LogFormat.h"
 #include "LogFilter.h"
+#include "LogChannel.h"
+#include "SLinkedList.h"
 
 class LogFactory {
+    typedef SLinkedList<LogChannel*>  LinkedList;
     private:
-    LogFormat* logFormat;
-    LogFilter* logFilter;
+    LinkedList chList;
     const char* formatSrt;
 
     public:
-    LogFactory();
+    LogFactory(bool useConsole = true);
     ~LogFactory();
-    void setFormatString(const char* fmtstr);
-    void setFormatString(String fmtstr);
-    LogFormat* getFormater();
-    LogFilter* getFilter();
+
+
+    LogChannel* addChannel(LogChannel* channel);
+    int delChannel(const char* chName);
+
+    // int setChannelOFF(const char* chName);
+    // int setChannelON(const char* chName);
+
+    void setChannelFormat(const char* chName, const char* formatString = NULL);
+
+    void addClass(const char* clName);
+
+    int print(const char* clName, LogLevel level, const char* mesage);
+
+
 };
 
 extern LogFactory logFactory;

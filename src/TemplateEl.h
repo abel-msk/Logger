@@ -24,6 +24,7 @@ class TemplateEl {
     public:
     TemplateEl();
     TemplateEl(tokenType t, const char* txt);
+    ~TemplateEl();
     void setType(tokenType t);
     tokenType getType();
     void setText(const char* txt);

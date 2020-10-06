@@ -10,5 +10,6 @@ _*/**
 **/.vscode
 **/.vscode/**
 **/.DS_Store
+**/*.code-workspace
 build
 build/**

@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "Tokenizer.h"
-#include "SVector.h"
 #include "BinaryTree.h"
 #include "BinaryTreeNode.h"
+#include "SLinkedList.h"
+#include "Logger.h"
 
 class FilterElementTest {
     public:
@@ -34,6 +35,7 @@ class frame {
 int main(void) {
 
     std::cout << "==============  Test 1 ==============" << std::endl;
+
 	frame *ctoken;
 	const char* token;
 
@@ -41,12 +43,13 @@ int main(void) {
 
     token=tkz->getToken('%');
 
-	SVector<frame*> *sv = new SVector<frame*>;
+	SLinkedList<frame*> *sv = new SLinkedList<frame*>;
+
     tkz->reset();
 	while ((token=tkz->getToken('%')) != 0) {
 		ctoken = new frame;
 		ctoken->str = token;
-		ctoken = sv->push_back(ctoken);
+		sv->PushBack(ctoken);
         std::cout << "Process token=" << token << "|"<< std::endl;
 
 	}
@@ -58,17 +61,17 @@ int main(void) {
 		std::cout << "Got an error" << std::endl;
 	}
 
-	sv->reset();
-	while ((ctoken = sv->getNext()) != 0) {
+
+    SListIterator<frame*> it = sv->begin();
+
+	while (it.Valid()) {
+        ctoken  = it.Item();
 		std::cout << "token=" << ctoken->str << std::endl;
+        ++it;
 	}
     
-    std::cout << "==============  SVector clear ==============" << std::endl;
-    sv->clear();
-
     std::cout << "==============  SVector delete ==============" << std::endl;
     delete sv;
-
     std::cout << "==============  Tokenizer clear ==============" << std::endl << std::flush;
     delete tkz;
     std::cout << "==============  Test 2 ==============" << std::endl;
@@ -134,10 +137,15 @@ int main(void) {
     foundRes = NULL;
     store->inOrderTraversal(new PrintAction());
     store->clear();
-    std::cout << "==============  Clear complete ==============" << std::endl;
-
     delete store;
 
+    std::cout << "==============  Test 5 ==============" << std::endl;
+
+    Logger logprint("MAIN");
+
+    logprint.error("ERROR string log out.");
+    logprint.debug("Print DEBUG");
+    logprint.info("Print INFO");
     std::cout << "==============  Finish ==============" << std::endl;
 
 

@@ -1,6 +1,14 @@
 #include "LogFilter.h"
 
-BinaryTree<compaundTreeKey*,FilterEL*,compaundKeyCmp> filterStore;
+
+/**
+ *  Initialize LogFilter class
+ */
+// LogFilter::LogFilter() {
+// }
+
+// LogFilter::~LogFilter() {
+// }
 
 /**
  *   Action class used for setup found nodes (found during passing the tree).
@@ -37,56 +45,42 @@ void filterListAction::run(compaundTreeKey* key, FilterEL* cl) {
     }
 }
 
-/**
- *  Initialize LogFilter class
- */
-LogFilter::LogFilter() {
-    compaundTreeKey* tmpKey = new compaundTreeKey();
+bool LogFilter::isExist(const char* clName, LogLevel level) {
+    compaundTreeKey tmpKey(clName,level);
+    // tmpKey->level = level;
+    // tmpKey->name = clName;
+    return filterStore.getByKey(&tmpKey) != NULL;
 }
 
+
+
 /**
- *  Find node with class name and level
- *  Set show value to TRUE
+ *  Find node with class name and level. Set filter value 
+ *  true - for show message, false for dont show.
  *  @param className - class name 
  *  @param level - log level
  */
-void LogFilter::setShow(const char* className, LogLevel level) {
-    tmpKey->level = level;
-    tmpKey->name = className;
-
-    filterStore.getByKey(tmpKey)->show=true;
+void LogFilter::setFilter(const char* clName, LogLevel level, bool value) {
+    compaundTreeKey tmpKey(clName,level);
+    // tmpKey->level = level;
+    // tmpKey->name = clName;
+    FilterEL* el = filterStore.getByKey(&tmpKey);
+    if ( el == NULL) {
+        compaundTreeKey* newKey = new compaundTreeKey(clName,level);
+        filterStore.add(newKey,new FilterEL(value));
+    }
+    else {
+        el->show=value;
+    }
 }
 
 /**
- *  Find node by regexp compare with class name and exact level
- *  Set show value to TRUE
+ *  Find node by regexp compare with class name and level. Set filter value 
+ *  true - for show message, false for dont show.
  *  @param className - class name 
  *  @param level - log level
  */
-void LogFilter::setShowEX(const char* classNameRX, LogLevel level) {
-    filterListAction fla(classNameRX,level, true);
-    filterStore.inOrderTraversal(&fla);
-}
-
-/**
- *  Find node with class name and level
- *  Set show value to FALSE
- *  @param className - class name 
- *  @param level - log level
- */
-void LogFilter::setHide(const char* className, LogLevel level) {
-    tmpKey->level = level;
-    tmpKey->name = className;
-    filterStore.getByKey(tmpKey)->show=true;
-}
-
-/**
- *  Find node by regexp compare with class name and exact level
- *  Set show value to FALSE
- *  @param className - class name 
- *  @param level - log level
- */
-void LogFilter::setHideEX(const char* classNameRX, LogLevel level) {
+void LogFilter::setFilterEX(const char* classNameRX, LogLevel level, bool value) {
     filterListAction fla(classNameRX,level, true);
     filterStore.inOrderTraversal(&fla);
 }
@@ -95,17 +89,15 @@ void LogFilter::setHideEX(const char* classNameRX, LogLevel level) {
  * Select node with defined class name ans defined level
  * 
  * @param className  Class name
- * @param level
+ * @param level Log level
  * @return TRUE if selected class name with level  is market for show
  */
-bool LogFilter::isShow(const char* className, LogLevel level) {
-    tmpKey->level = level;
-    tmpKey->name = className;
-    FilterEL* el = filterStore.getByKey(tmpKey);
-    if (el == 0 ) {
-        tmpKey->name = "*";
-        el = filterStore.getByKey(tmpKey);
-    }
+bool LogFilter::isShow(const char* clName, LogLevel level) {
+    compaundTreeKey tmpKey(clName,level);
+    // tmpKey->level = level;
+    // tmpKey->name = className;
+    FilterEL* el = filterStore.getByKey(&tmpKey);
+
     if (el == 0 ) return getDefView(level);;
     return el->show;
 }
@@ -126,6 +118,8 @@ bool LogFilter::getDefView(LogLevel level) {
         return DEF_LOG_PRINT_DEBUG;
         case ERROR:
         return DEF_LOG_PRINT_ERROR;
+        case WARNING:
+        return DEF_LOG_PRINT_WARN;        
         default:
         return false;
     }

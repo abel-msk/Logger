@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef ARDUINO_ARCH_ESP8266
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR)
 #include <WString.h>
 #else
 #include <string>
@@ -10,7 +10,7 @@ typedef std::string String;
 #endif
 
 TemplateEl::TemplateEl() {
-    text = "";    
+    text = strdup("");    
 
     type = PLAIN;
     align = VAL_ALIGN_LEFT;
@@ -19,9 +19,13 @@ TemplateEl::TemplateEl() {
 
 TemplateEl::TemplateEl(tokenType t, const char* txt) {
     type = t;
-    text = txt;
+    text = strdup(txt);
     align = VAL_ALIGN_LEFT;
 
+}
+
+TemplateEl::~TemplateEl() {
+    delete text;
 }
 
 void TemplateEl::setType(tokenType t) {
@@ -67,6 +71,7 @@ const char* TemplateEl::getReplaced(const char* subst) {
     if ((maxLen == 0 ) || (maxLen == substLen)) {
         if ( (resBuff=(char*)malloc(substLen+1)) == 0) return nullptr;
         strncpy(resBuff,source,substLen);
+        maxLen = substLen;
     }
     else {
         if ( (resBuff=(char*)malloc(maxLen)) == 0) return nullptr;

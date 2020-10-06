@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include "TemplateEl.h"
-#include "SVector.h"
+#include "SLinkedList.h"
 #include "Tokenizer.h"
 
 
@@ -18,6 +18,7 @@ typedef std::string String;
 #define LOG_LEVEL_DEBUG "DEBUG"
 #define LOG_LEVEL_ERROR "ERROR"
 #define LOG_LEVEL_INFO "INFO"
+#define LOG_LEVEL_WARNING "WARNING"
 
 
 #define STR_TOK_DATE "date"
@@ -38,6 +39,7 @@ typedef std::string String;
 
 enum LogLevel {
     INFO,
+    WARNING,
     DEBUG,
     ERROR
 };
@@ -70,15 +72,16 @@ const char* level2str(LogLevel level);
 class LogFormat {
     private:
     // const char* format;
-    SVector<TemplateEl*> tokensList;
+    SLinkedList<TemplateEl*> tokensList;
     int parseErr;
-    TemplateEl* getAttr(const char* token, const char* key);
+    TemplateEl* getAttr(tokenType tType, const char* token, const char* key);
 
     public:
-    LogFormat(String fmt);
+    LogFormat();
     int hasError();
-    const char* parse(const char* date, const char* name, LogLevel level, const char* msg);
-    const char* parse(const char* date, const char* name, const char* level, const char* msg);
+    int parseFmt(String fmt);
+    const char* compile(const char* date, const char* name, LogLevel level, const char* msg);
+    const char* compile(const char* date, const char* name, const char* level, const char* msg);
 };
 
 

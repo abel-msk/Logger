@@ -10,6 +10,8 @@ const char* level2str(LogLevel level) {
         return LOG_LEVEL_DEBUG;
     case ERROR:
         return LOG_LEVEL_ERROR;
+    case WARNING:
+        return LOG_LEVEL_WARNING;    
     default:
         return "";
     }
@@ -31,6 +33,12 @@ char* appendStr(char* buff, const char* token) {
     return buff;
 }
 
+
+LogFormat::LogFormat() {
+    parseErr = 0;
+
+}
+
 int LogFormat::hasError() {
     return parseErr;
 }
@@ -41,7 +49,7 @@ int LogFormat::hasError() {
  * 
 *    @param fmt message template
  */
-LogFormat::LogFormat(String fmt) {
+int LogFormat::parseFmt(String fmt) {
     Tokenizer tok(fmt.c_str());
     const char* text;
     TemplateEl* el;
@@ -51,25 +59,29 @@ LogFormat::LogFormat(String fmt) {
         
         if (strlen(text) > 0 ) {
             if ( strncmp(text,STR_TOK_DATE,strlen(STR_TOK_DATE)) == 0) {
-                if ((el = getAttr(text,STR_TOK_DATE)) != 0)
-                    el->setType(DATE);
+                el = getAttr(DATE,text,STR_TOK_DATE);
+
             } else  if (strncmp(text,STR_TOK_CLNAME,strlen(STR_TOK_CLNAME))==0) {
-                if ((el = getAttr(text,STR_TOK_CLNAME)) != 0) 
-                    el->setType(CLNAME);
+                el = getAttr(CLNAME,text,STR_TOK_CLNAME);
+
             } else if (strncmp(text,STR_TOK_LEVEL,strlen(STR_TOK_LEVEL))==0) {
-                if ((el = getAttr(text,STR_TOK_LEVEL)) != 0)
-                    el->setType(LEVEL);
+                el = getAttr(LEVEL,text,STR_TOK_LEVEL);
+
             } else if (strncmp(text,STR_TOK_MSG,strlen(STR_TOK_MSG))==0) {
-                if ((el = getAttr(text,STR_TOK_MSG)) != 0)
-                    el->setType(MSG);
+                el = getAttr(MSG,text,STR_TOK_MSG);
             }
             else {
                 el = new TemplateEl(PLAIN,text);
             }
-            tokensList.push_back(el);
+
+            // assert((el==0)&&"Format string pasing error.");
+            if ( el == 0 ) return parseErr==0?-1:parseErr;
+            tokensList.PushBack(el);
         }
         free((void*)text);
     }
+
+    return parseErr;
 }
 
 /**
@@ -85,12 +97,13 @@ LogFormat::LogFormat(String fmt) {
 *       0 - Incorrect format ans set  parseErr to error num.
 *   
 */
-TemplateEl* LogFormat::getAttr(const char* token, const char* key) {
+TemplateEl* LogFormat::getAttr(tokenType tType, const char* token, const char* key) {
     TemplateEl* el = new TemplateEl();
+    el->setType(tType);
     char* attr = (char *)token+strlen(key);
 
     //  Got end of string return default values
-    if ( *attr == '0') {
+    if ( *attr == 0) {
         el->setAlign(VAL_ALIGN_LEFT);
         el->setLength(0);
         return el;
@@ -135,39 +148,52 @@ TemplateEl* LogFormat::getAttr(const char* token, const char* key) {
     return el;
 }
 
-const char* LogFormat::parse(const char* date, const char*  className, LogLevel level, const char*  msg) 
+const char* LogFormat::compile(const char* date, const char*  className, LogLevel level, const char*  msg) 
 {
-    return parse(date, className, level2str(level), msg);
+    return compile(date, className, level2str(level), msg);
 }
 
-const char*  LogFormat::parse(const char* date, const char*  className, const char* level, const char*  msg) 
+const char*  LogFormat::compile(const char* date, const char*  className, const char* level, const char*  msg) 
 {
     char* buff = (char*)malloc(LOGSTR_BUFF_LEN);
+    const char* txt;
     buff[0] = 0;
     bool isMSGInserted = false;
     TemplateEl* el;
-    tokensList.reset();
-    
-    while ((el=tokensList.getNext()) != 0) { 
+    // tokensList.reset();
+    SListIterator<TemplateEl*> it = tokensList.begin();
+
+    while (it.Valid()) { 
         
+            el = it.Item();
             switch (el->getType()) {
                 case PLAIN: 
-                    buff = appendStr(buff,el->getText());
+                    txt =  el->getText();
+                    buff = appendStr(buff,txt);
+                    delete txt;
                     break;
                 case DATE: 
-                    buff = appendStr(buff,el->getReplaced(date));
+                    txt = el->getReplaced(date);
+                    buff = appendStr(buff,txt);
+                    delete txt;
                     break;
                 case CLNAME: 
+                    txt = el->getReplaced(className);
                     buff = appendStr(buff,el->getReplaced(className));
+                    delete txt;
                     break;
                 case LEVEL:
+                    txt = el->getReplaced(level);
                     buff = appendStr(buff,el->getReplaced(level));
+                    delete txt;
                     break;
                 case MSG:
                     isMSGInserted = true;
                     buff = appendStr(buff,msg);   
             }
             if ( buff == NULL)  return NULL;
+            
+            ++it;
         }
         if (!isMSGInserted) {
             buff = appendStr(buff,msg); 

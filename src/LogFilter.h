@@ -1,16 +1,18 @@
 #ifndef LOG_FILTER_H_
 #define LOG_FILTER_H_
 
-#include <string>
 #include "LogFormat.h"
 #include "BinaryTree.h"
+#include <string.h>
 
 #ifdef USE_REGEXP_SEARCH
 #include <Regexp.h>
 #endif
 
+
 #define DEF_LOG_PRINT_DEBUG false
 #define DEF_LOG_PRINT_INFO false
+#define DEF_LOG_PRINT_WARN true
 #define DEF_LOG_PRINT_ERROR true
 
 /**
@@ -20,7 +22,12 @@ class compaundTreeKey {
     public:
     LogLevel level;
     const char* name;
-    compaundTreeKey(const char* n =  NULL, LogLevel l = LogLevel::INFO) {name = n; level =l; };
+    compaundTreeKey(const char* n = "", LogLevel l = LogLevel::INFO) 
+        {
+            name = strdup(n);
+            level = l; 
+        };
+    ~compaundTreeKey() { delete name; };
 };
 
 /**
@@ -41,9 +48,9 @@ struct compaundKeyCmp {
  */
 struct FilterEL {
     bool show;
+    FilterEL(bool value) : show(value) {}
 };
 
-extern  BinaryTree<compaundTreeKey*,FilterEL*,compaundKeyCmp> filterStore;
 
 /**
  * 
@@ -54,14 +61,15 @@ extern  BinaryTree<compaundTreeKey*,FilterEL*,compaundKeyCmp> filterStore;
  */
 class  LogFilter {
     private:
+    BinaryTree<compaundTreeKey*,FilterEL*,compaundKeyCmp> filterStore;
 
-    compaundTreeKey* tmpKey;  // allocated class for faset key creaton on run.
+    // compaundTreeKey* tmpKey;  // allocated class for faster key creaton on run.
     public:
-    LogFilter();
-    void setShow(const char* className, LogLevel level);
-    void setShowEX(const char* className, LogLevel leve);
-    void setHide(const char* className, LogLevel level);
-    void setHideEX(const char* className, LogLevel level);
+    // LogFilter();
+    // ~LogFilter();
+    bool isExist(const char* clName, LogLevel level);
+    void setFilter(const char* className, LogLevel level, bool value = true);
+    void setFilterEX(const char* className, LogLevel leve, bool value = true);
     bool isShow(const char* className, LogLevel level);
     bool getDefView(LogLevel level);
     // classList getClassList();
@@ -81,7 +89,5 @@ struct filterListAction: public BinaryTreeAction<compaundTreeKey*,FilterEL*> {
     void run(compaundTreeKey* key, FilterEL* cl);
 };
 
-
-extern LogFilter logFilter;
 
 #endif
