@@ -106,9 +106,8 @@ int LogFactory::setChFilter(const char* chName, const char* clName, LogLevel lev
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
         if (strcmp(it.Item()->getName(),chName) == 0) {
-            LogChannel* channel = it.Item();
-                it.Item()->setFilter(clName,level,isShow);
-                return 0;
+            it.Item()->setFilter(clName,level,isShow);
+            return 0;
         }
         ++it;
 	}
@@ -130,6 +129,18 @@ void LogFactory::setFilter(const char* clName, LogLevel level, bool isShow ) {
     }
     return;
 }
+
+
+void LogFactory::setDefaultFilter(LogLevel level, bool value) {
+    LinkedList::iterator it = chList.begin();
+    while (it.Valid()) {
+        it.Item()->getFilterObject()->setDefault(level,value);
+        ++it;
+    }
+    return;
+}
+
+
 
 
 LogFactory logFactory;

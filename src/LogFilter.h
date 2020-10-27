@@ -1,19 +1,17 @@
 #ifndef LOG_FILTER_H_
 #define LOG_FILTER_H_
 
+#include <string.h>
 #include "LogFormat.h"
 #include "BinaryTree.h"
-#include <string.h>
+#include "LogLevels.h"
+
 
 #ifdef USE_REGEXP_SEARCH
 #include <Regexp.h>
 #endif
 
 
-#define DEF_LOG_PRINT_DEBUG false
-#define DEF_LOG_PRINT_INFO false
-#define DEF_LOG_PRINT_WARN true
-#define DEF_LOG_PRINT_ERROR true
 
 /**
  *   Class for represent compaund key as sum of class name and log lavel
@@ -22,7 +20,7 @@ class compaundTreeKey {
     public:
     LogLevel level;
     const char* name;
-    compaundTreeKey(const char* n = "", LogLevel l = LogLevel::INFO) 
+    compaundTreeKey(const char* n = "", LogLevel l = LogLevel::L_INFO) 
         {
             name = strdup(n);
             level = l; 
@@ -62,16 +60,19 @@ struct FilterEL {
 class  LogFilter {
     private:
     BinaryTree<compaundTreeKey*,FilterEL*,compaundKeyCmp> filterStore;
+    LogLevels levelDefaults;
 
     // compaundTreeKey* tmpKey;  // allocated class for faster key creaton on run.
     public:
     // LogFilter();
     // ~LogFilter();
+    void addClass(const char* clName);
     bool isExist(const char* clName, LogLevel level);
     void setFilter(const char* className, LogLevel level, bool value = true);
     void setFilterEX(const char* className, LogLevel leve, bool value = true);
     bool isShow(const char* className, LogLevel level);
-    bool getDefView(LogLevel level);
+    void setDefault(LogLevel level, bool value);
+    // bool getDefView(LogLevel level);
     // classList getClassList();
 };
 

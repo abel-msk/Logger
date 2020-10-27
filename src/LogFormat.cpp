@@ -1,21 +1,9 @@
 #include "LogFormat.h"
+#include "LogLevels.h"
 // #include "FElement.h"
 
 
-const char* level2str(LogLevel level) {
-    switch (level) {
-    case INFO: 
-        return LOG_LEVEL_INFO;
-    case DEBUG:
-        return LOG_LEVEL_DEBUG;
-    case ERROR:
-        return LOG_LEVEL_ERROR;
-    case WARNING:
-        return LOG_LEVEL_WARNING;    
-    default:
-        return "";
-    }
-}
+
 
 char* appendStr(char* buff, const char* token) {
     unsigned int bLen = strlen(buff);

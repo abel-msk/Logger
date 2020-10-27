@@ -16,10 +16,10 @@ Logger::~Logger() {
     delete clName;
 }
 
-bool Logger::debug(String msg) { return print(LogLevel::DEBUG,msg);}
-bool Logger::info(String msg) { return print(LogLevel::INFO,msg);}
-bool Logger::error(String msg) { return print(LogLevel::ERROR,msg);}
-bool Logger::warn(String msg) { return print(LogLevel::ERROR,msg);}
+bool Logger::debug(String msg) { return print(LogLevel::L_DEBUG,msg);}
+bool Logger::info(String msg) { return print(LogLevel::L_INFO,msg);}
+bool Logger::error(String msg) { return print(LogLevel::L_ERR,msg);}
+bool Logger::warn(String msg) { return print(LogLevel::L_ERR,msg);}
 
 
 

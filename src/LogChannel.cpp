@@ -1,5 +1,6 @@
 #include "LogChannel.h"
 #include "LogFormat.h"
+#include "LogLevels.h"
 #include <stdlib.h>
 
 
@@ -41,10 +42,7 @@ void LogChannel::setFormat(const char* fmt) {
 }
 
 void LogChannel::addClass(const char* clName) {
-    setFilter(clName, DEBUG, filter->getDefView(DEBUG));
-    setFilter(clName, INFO, filter->getDefView(INFO));
-    setFilter(clName, ERROR, filter->getDefView(ERROR));
-    setFilter(clName, WARNING, filter->getDefView(WARNING));
+    filter->addClass(clName);
 }
 
 void LogChannel::setFilter(const char* clName, LogLevel level, bool show) {
@@ -94,6 +92,10 @@ int LogChannel::out(const char* buff) {
     return 1;
 }
 
+ LogFilter* LogChannel::getFilterObject() {
+     return filter;
+ }
+
 
 
 /**
@@ -101,19 +103,21 @@ int LogChannel::out(const char* buff) {
  */
 LogCHSerial::LogCHSerial():LogChannel("serial") {
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_COMPILE_)  
-    Serial.begin();
+    Serial.begin(SERIAL_BAUD_SPEED);
 #endif
     
 }
 
 int LogCHSerial::out(const char* buff) {
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_COMPILE_)     
-    Serial.println(msg);
-    return strlen(msg);
+    Serial.println(buff);
+    return strlen(buff);
 #else 
     return fprintf(stdout, "%s\n", buff); 
 #endif
 }
+
+
 
 
 

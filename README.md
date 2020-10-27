@@ -5,10 +5,10 @@ Messages for different log level can be filtered.
 
 Logging levels are:
 
-> LogLevel::INFO\
-> LogLevel::WARNING\
-> LogLevel::DEBUG\
-> LogLevel::ERROR\
+> LogLevel::L_INFO\
+> LogLevel::L_WARN\
+> LogLevel::L_DEBUG\
+> LogLevel::L_ERR\
 
 Uses channels for send log messages to various logging system.
 Currently realized logging to Serial port (uses HardwareSerial.h from Arduino framework )

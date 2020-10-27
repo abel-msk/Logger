@@ -5,6 +5,7 @@
 #include "TemplateEl.h"
 #include "SLinkedList.h"
 #include "Tokenizer.h"
+#include "LogLevels.h"
 
 
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR)
@@ -14,12 +15,6 @@
 #include <string>
 typedef std::string String;
 #endif
-
-#define LOG_LEVEL_DEBUG "DEBUG"
-#define LOG_LEVEL_ERROR "ERROR"
-#define LOG_LEVEL_INFO "INFO"
-#define LOG_LEVEL_WARNING "WARNING"
-
 
 #define STR_TOK_DATE "date"
 #define STR_TOK_CLNAME "clname"
@@ -37,14 +32,6 @@ typedef std::string String;
 
 #define LOGSTR_BUFF_LEN 256 
 
-enum LogLevel {
-    INFO,
-    WARNING,
-    DEBUG,
-    ERROR
-};
-
-const char* level2str(LogLevel level);
 
 /**
  * When initilized, analyze template string.

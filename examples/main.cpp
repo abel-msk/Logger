@@ -145,10 +145,10 @@ int main(void) {
 
     logprint.error("ERROR string log out.");
     std::cout << "==============  Hide ERROR" << std::endl;
-    logFactory.setFilter("MAIN",LogLevel::ERROR,false);
+    logFactory.setFilter("MAIN",LogLevel::L_ERR,false);
     logprint.error("ERROR Hide string.");
     std::cout << "==============  Show DEBUG" << std::endl;
-    logFactory.setFilter("MAIN",LogLevel::DEBUG,true);
+    logFactory.setFilter("MAIN",LogLevel::L_DEBUG,true);
     logprint.debug("Print string.");
 
     logprint.debug("Print DEBUG");

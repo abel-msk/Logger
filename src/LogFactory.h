@@ -4,6 +4,7 @@
 #include "LogFilter.h"
 #include "LogChannel.h"
 #include "SLinkedList.h"
+#include "LogLevels.h"
 
 class LogFactory {
     typedef SLinkedList<LogChannel*>  LinkedList;
@@ -23,7 +24,7 @@ class LogFactory {
     // int setChannelON(const char* chName);
 
     void setChannelFormat(const char* chName, const char* formatString = NULL);
-
+    void setDefaultFilter(LogLevel level, bool value);
     void addClass(const char* clName);
     int setChFilter(const char* chName, const char* clName, LogLevel level, bool isShow );
     void setFilter(const char* clName, LogLevel level, bool isShow );

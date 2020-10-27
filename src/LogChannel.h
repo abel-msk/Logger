@@ -2,10 +2,16 @@
 #define _LOG_CHANNEL_
 #include "BinaryTree.h"
 #include "LogFilter.h"
+#include "LogLevels.h"
 #define TIME_BUFF_LEN 100
 
 
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_COMPILE_) 
+
+#ifndef SERIAL_BAUD_SPEED 
+#define SERIAL_BAUD_SPEED 115200
+#endif
+
 #include <WString.h>
 // #include <Arduino.h>
 #include <cstring>
@@ -28,7 +34,7 @@ class LogChannel {
     
     public:
     LogChannel(const char* name = "unknown");
-    ~LogChannel();
+    virtual ~LogChannel();
     virtual const char* getName();
     virtual void setFormat(const char* fmt);
     virtual void addClass(const char* clName);
@@ -37,6 +43,7 @@ class LogChannel {
     virtual char* formatTS();
     virtual int print(const char* clName, LogLevel level, const char* msg);
     virtual int out(const char* buff);
+    virtual LogFilter* getFilterObject();
 
 };
 

@@ -2,23 +2,12 @@
 
 
 /**
- *  Initialize LogFilter class
- */
-// LogFilter::LogFilter() {
-// }
-
-// LogFilter::~LogFilter() {
-// }
-
-/**
  *   Action class used for setup found nodes (found during passing the tree).
  *   Node is found when match class name regexp expression and log level
  *  @param expr regular expression for matchin class name part of key
  *  @param lvl log level
  *  @param isShow set found node to that value 
  */
-
-
 filterListAction::filterListAction(const char* expr, LogLevel lvl, bool isShow)  {
     reg_expr = expr; level = lvl; setShow = isShow;
 }
@@ -52,6 +41,20 @@ bool LogFilter::isExist(const char* clName, LogLevel level) {
     return filterStore.getByKey(&tmpKey) != NULL;
 }
 
+
+/**
+ * Check if such class name exist. If class notfound add classname with its default filer value
+ * @param clName new class name
+ */
+void LogFilter::addClass(const char* clName) {
+    LogLevels::iterator_t it = levelDefaults.begin();
+    while (it.Valid()) {
+        if ( ! isExist(clName,it.Item()->level)) {
+           setFilter(clName,it.Item()->level,it.Item()->value);
+        }
+        ++it;
+	}
+}
 
 
 /**
@@ -98,32 +101,16 @@ bool LogFilter::isShow(const char* clName, LogLevel level) {
     // tmpKey->name = className;
     FilterEL* el = filterStore.getByKey(&tmpKey);
 
-    if (el == 0 ) return getDefView(level);;
+    if (el == 0 ) return levelDefaults.getDefault(level);
     return el->show;
 }
 
-/**
- *   Retrun show value for default class and level.  
- *   Default mean not presented in filter list
- *   @param level get default value for level
- *   @return 
- *       TRUE - show log message
- *       FALSE - do not show
- */
-bool LogFilter::getDefView(LogLevel level) {
-    switch (level) {
-        case INFO: 
-        return DEF_LOG_PRINT_INFO;
-        case DEBUG:
-        return DEF_LOG_PRINT_DEBUG;
-        case ERROR:
-        return DEF_LOG_PRINT_ERROR;
-        case WARNING:
-        return DEF_LOG_PRINT_WARN;        
-        default:
-        return false;
-    }
+void LogFilter::setDefault(LogLevel level, bool value) {
+    LogLevels::iterator_t it = levelDefaults.begin();
+    while (it.Valid()) {
+        if (it.Item()->level == level) {
+            it.Item()->value = value;
+        }
+        ++it;
+	}
 }
-
-
-LogFilter logFilter;
