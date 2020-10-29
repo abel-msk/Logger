@@ -16,7 +16,7 @@ enum tokenType {
 
 class TemplateEl {
     private:
-    const char* text;
+    char* text;
     tokenType type;
     int align;
     unsigned int maxLen;
@@ -28,10 +28,10 @@ class TemplateEl {
     void setType(tokenType t);
     tokenType getType();
     void setText(const char* txt);
-    const char* getText();
+    char* getText();
     void setAlign(int);
     void setLength(int);
-    const char* getReplaced(const char* subst);
+    char* getReplaced(const char* subst);
 };
 
 #endif

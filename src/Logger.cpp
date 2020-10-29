@@ -13,7 +13,7 @@ Logger::Logger(const char* cn) {
 }
 
 Logger::~Logger() {
-    delete clName;
+    free(clName);
 }
 
 bool Logger::debug(String msg) { return print(LogLevel::L_DEBUG,msg);}

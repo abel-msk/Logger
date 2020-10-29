@@ -1,23 +1,29 @@
 #include "LogFormat.h"
 #include "LogLevels.h"
+#ifdef __DEBUG_ESP_MEM_LEAK__
+#include <esp.h>
+#endif
 // #include "FElement.h"
 
 
 
 
 char* appendStr(char* buff, const char* token) {
+
     unsigned int bLen = strlen(buff);
     unsigned int tLen  = strlen(token);
 
     if ((buff != NULL) && (tLen > 0 )) {
         if ((bLen + tLen + 1) >  LOGSTR_BUFF_LEN) {
-            buff = (char*)realloc(buff,bLen+tLen+1);
+            buff = (char*)realloc((void*)buff,bLen+tLen+1);
         }
         if (buff != NULL) {
+            //strcat(buff,token);
             strncpy(buff+bLen,token,tLen);
             buff[bLen+tLen]=0;
         }
     }
+
     return buff;
 }
 
@@ -136,56 +142,98 @@ TemplateEl* LogFormat::getAttr(tokenType tType, const char* token, const char* k
     return el;
 }
 
-const char* LogFormat::compile(const char* date, const char*  className, LogLevel level, const char*  msg) 
+char* LogFormat::compile( char* date,  char*  className, LogLevel level, const char*  msg) 
 {
     return compile(date, className, level2str(level), msg);
 }
 
-const char*  LogFormat::compile(const char* date, const char*  className, const char* level, const char*  msg) 
+char*  LogFormat::compile( char* date,  char*  className, const char* level, const char*  msg) 
 {
+#ifdef __DEBUG_ESP_MEM_LEAK__    
+    Serial.print(F("Free mem before compile = "));
+    Serial.println(ESP.getFreeHeap());  
+#endif
+
     char* buff = (char*)malloc(LOGSTR_BUFF_LEN);
-    const char* txt;
     buff[0] = 0;
+
+#ifdef __DEBUG_ESP_MEM_LEAK__ 
+    Serial.print(F("Free mem after alloc = "));
+    Serial.println(ESP.getFreeHeap());  
+#endif
+
+    //char buff [LOGSTR_BUFF_LEN];
+    char* txt;
+
     bool isMSGInserted = false;
     TemplateEl* el;
     // tokensList.reset();
     SListIterator<TemplateEl*> it = tokensList.begin();
 
     while (it.Valid()) { 
-        
             el = it.Item();
+
+#ifdef __DEBUG_ESP_MEM_LEAK__ 
+            Serial.print(F("Process template part type"));
+            Serial.print(el->getType());
+            Serial.print(F("text, mem before = "));
+            Serial.println(ESP.getFreeHeap());  
+#endif
             switch (el->getType()) {
-                case PLAIN: 
+                case PLAIN:  
                     txt =  el->getText();
                     buff = appendStr(buff,txt);
-                    delete txt;
+                    free((void*)txt); 
                     break;
                 case DATE: 
                     txt = el->getReplaced(date);
-                    buff = appendStr(buff,txt);
-                    delete txt;
+                    buff = appendStr(buff,txt);                   
+                    free((void*)txt);                    
                     break;
                 case CLNAME: 
                     txt = el->getReplaced(className);
-                    buff = appendStr(buff,el->getReplaced(className));
-                    delete txt;
+                    buff = appendStr(buff,txt);
+                    free((void*)txt);
                     break;
                 case LEVEL:
                     txt = el->getReplaced(level);
-                    buff = appendStr(buff,el->getReplaced(level));
-                    delete txt;
+                    buff = appendStr(buff,txt);
+                    free((void*)txt);                    
                     break;
                 case MSG:
                     isMSGInserted = true;
                     buff = appendStr(buff,msg);   
+
             }
             if ( buff == NULL)  return NULL;
             
             ++it;
+
+#ifdef __DEBUG_ESP_MEM_LEAK__ 
+            Serial.print(F("Process template part type"));
+            Serial.print(el->getType());
+            Serial.print(F(", mem after = "));
+            Serial.println(ESP.getFreeHeap());  
+
+            Serial.print(F("Replace message2, mem before = "));
+            Serial.println(ESP.getFreeHeap()); 
+#endif
         }
+
         if (!isMSGInserted) {
             buff = appendStr(buff,msg); 
         }
+
+#ifdef __DEBUG_ESP_MEM_LEAK__
+    Serial.print(F("Replace message2, mem after = "));
+    Serial.println(ESP.getFreeHeap());  
+
+    Serial.print(F("Nonal log message len = "));
+    Serial.println(strlen(buff));
+    Serial.print(F("Free mem after compile = "));
+    Serial.println(ESP.getFreeHeap());  
+#endif     
+
     return buff;
 }
 

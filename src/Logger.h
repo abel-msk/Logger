@@ -6,7 +6,7 @@
 
 class Logger {
     private:
-    const char* clName;
+    char* clName;
 
     public:
     Logger(const char* clName="Unknown");    

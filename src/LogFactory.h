@@ -23,13 +23,13 @@ class LogFactory {
     // int setChannelOFF(const char* chName);
     // int setChannelON(const char* chName);
 
-    void setChannelFormat(const char* chName, const char* formatString = NULL);
+    void setChannelFormat(char* chName, const char* formatString = NULL);
     void setDefaultFilter(LogLevel level, bool value);
-    void addClass(const char* clName);
-    int setChFilter(const char* chName, const char* clName, LogLevel level, bool isShow );
-    void setFilter(const char* clName, LogLevel level, bool isShow );
+    void addClass(char* clName);
+    int setChFilter(char* chName, char* clName, LogLevel level, bool isShow );
+    void setFilter(char* clName, LogLevel level, bool isShow );
 
-    int print(const char* clName, LogLevel level, const char* mesage);
+    int print(char* clName, LogLevel level, const char* mesage);
 
 
 };

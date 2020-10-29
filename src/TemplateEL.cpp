@@ -25,7 +25,7 @@ TemplateEl::TemplateEl(tokenType t, const char* txt) {
 }
 
 TemplateEl::~TemplateEl() {
-    delete text;
+    free(text);
 }
 
 void TemplateEl::setType(tokenType t) {
@@ -40,7 +40,7 @@ void TemplateEl::setText(const char* txt) {
     text = strdup(txt);
 }
 
-const char* TemplateEl::getText() {
+char* TemplateEl::getText() {
     return strdup(text);
 }
 
@@ -62,8 +62,9 @@ void TemplateEl::setLength(int l) {
     @return new allocated char buff
 
 */
-const char* TemplateEl::getReplaced(const char* subst) {
+char* TemplateEl::getReplaced(const char* subst) {
     unsigned int substLen = strlen(subst);
+    unsigned int finLen = maxLen;
     char *resBuff;
     const char* source = subst;
     unsigned int i;
@@ -71,7 +72,7 @@ const char* TemplateEl::getReplaced(const char* subst) {
     if ((maxLen == 0 ) || (maxLen == substLen)) {
         if ( (resBuff=(char*)malloc(substLen+1)) == 0) return nullptr;
         strncpy(resBuff,source,substLen);
-        maxLen = substLen;
+        finLen = substLen;
     }
     else {
         if ( (resBuff=(char*)malloc(maxLen)) == 0) return nullptr;
@@ -100,6 +101,6 @@ const char* TemplateEl::getReplaced(const char* subst) {
             strncpy(resBuff,source,substLen);
         }  
     }
-    resBuff[maxLen] = 0;
+    resBuff[finLen] = 0;
     return resBuff;
 }

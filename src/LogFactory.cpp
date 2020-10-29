@@ -51,7 +51,7 @@ int LogFactory::delChannel(const char* chName) {
  *  @param chNname channel name
  *  @param formatString format string. See @link LogFormat
  */
-void LogFactory::setChannelFormat(const char* chName, const char* formatString) {
+void LogFactory::setChannelFormat(char* chName, const char* formatString) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
         if (strcmp(it.Item()->getName(),chName) == 0) {
@@ -67,7 +67,7 @@ void LogFactory::setChannelFormat(const char* chName, const char* formatString) 
  * @param clName  class name
  * 
  */
-void LogFactory::addClass(const char* clName) {
+void LogFactory::addClass(char* clName) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
         it.Item()->addClass(clName);
@@ -82,7 +82,7 @@ void LogFactory::addClass(const char* clName) {
  * @param message message to print
  * 
  */
-int LogFactory::print(const char* clName, LogLevel level, const char* message) {
+int LogFactory::print(char* clName, LogLevel level, const char* message) {
     int ret = 0;
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
@@ -102,7 +102,7 @@ int LogFactory::print(const char* clName, LogLevel level, const char* message) {
  *      1 - channel no found
  *      0 - filter was set
  */
-int LogFactory::setChFilter(const char* chName, const char* clName, LogLevel level, bool isShow ) {
+int LogFactory::setChFilter(char* chName, char* clName, LogLevel level, bool isShow ) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
         if (strcmp(it.Item()->getName(),chName) == 0) {
@@ -121,7 +121,7 @@ int LogFactory::setChFilter(const char* chName, const char* clName, LogLevel lev
  * @param isShow fiter value. True - print mrssage in channel; False - do not print out
  * 
  */
-void LogFactory::setFilter(const char* clName, LogLevel level, bool isShow ) {
+void LogFactory::setFilter(char* clName, LogLevel level, bool isShow ) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
         it.Item()->setFilter(clName,level,isShow);

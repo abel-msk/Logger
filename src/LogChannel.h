@@ -37,12 +37,12 @@ class LogChannel {
     virtual ~LogChannel();
     virtual const char* getName();
     virtual void setFormat(const char* fmt);
-    virtual void addClass(const char* clName);
-    virtual void setFilter(const char* clName, LogLevel level, bool show);
-    virtual bool doFilter(const char* clName, LogLevel level);
+    virtual void addClass(char* clName);
+    virtual void setFilter(char* clName, LogLevel level, bool show);
+    virtual bool doFilter(char* clName, LogLevel level);
     virtual char* formatTS();
-    virtual int print(const char* clName, LogLevel level, const char* msg);
-    virtual int out(const char* buff);
+    virtual int print(char* clName, LogLevel level, const char* msg);
+    virtual int out(char* buff);
     virtual LogFilter* getFilterObject();
 
 };
@@ -50,7 +50,7 @@ class LogChannel {
 class LogCHSerial: public LogChannel {
     public:
     LogCHSerial();
-    virtual int out(const char* msg);
+    virtual int out(char* msg);
 };
 
 

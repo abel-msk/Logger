@@ -2,6 +2,9 @@
 #include "LogFormat.h"
 #include "LogLevels.h"
 #include <stdlib.h>
+#ifdef __DEBUG_ESP_MEM_LEAK__
+#include <esp.h>
+#endif
 
 
 /*
@@ -41,15 +44,15 @@ void LogChannel::setFormat(const char* fmt) {
     parserError = formatter->parseFmt(fmt);
 }
 
-void LogChannel::addClass(const char* clName) {
+void LogChannel::addClass(char* clName) {
     filter->addClass(clName);
 }
 
-void LogChannel::setFilter(const char* clName, LogLevel level, bool show) {
+void LogChannel::setFilter(char* clName, LogLevel level, bool show) {
     filter->setFilter(clName, level, show);
 }
 
-bool LogChannel::doFilter(const char* clName, LogLevel level) {
+bool LogChannel::doFilter(char* clName, LogLevel level) {
     return filter->isShow(clName,level);
 }
 
@@ -58,18 +61,38 @@ char* LogChannel::formatTS() {
         struct tm * timeinfo;
         //char humanTime[80];
         char* buff = (char*)malloc(TIME_BUFF_LEN);
+
+
         time (&rawtime);
         timeinfo = localtime(&rawtime);
+
         size_t size = strftime(buff,TIME_BUFF_LEN,"%d-%m-%Y %H:%M:%S",timeinfo);
         buff[size] = 0;
+
+        // Serial.println();
+        // Serial.print(F("Time info = "));
+        // Serial.print(buff);
+        // Serial.println();
+        // Serial.print(F("Time len = "));
+        // Serial.print(strlen(buff));
+        // Serial.println();
+
+
         return buff;
 }
 
-int LogChannel::print(const char* clName, LogLevel level, const char* msg) {
+int LogChannel::print(char* clName, LogLevel level, const char* msg) {
+
+#ifdef __DEBUG_ESP_MEM_LEAK__
+    Serial.print(F("Free mem before  print = "));
+    Serial.println(ESP.getFreeHeap());   
+#endif  
+
     int outputLen= 0;
     if( doFilter(clName,level) ) {
+
         char* tsBuff = formatTS();
-        const char* buff;
+        char* buff = NULL;
 
         if ((parserError == 0) && (formatter != NULL)) {
             buff = formatter->compile(tsBuff,clName,level,msg);
@@ -77,18 +100,25 @@ int LogChannel::print(const char* clName, LogLevel level, const char* msg) {
         else {
             buff = strdup(msg);
         }
-        delete tsBuff;
+        free((void*)tsBuff);
+
         outputLen = out(buff);
 
         if( buff != NULL) {
-            delete buff;
+            free((void*)buff);
         }
     }
+
+#ifdef __DEBUG_ESP_MEM_LEAK__
+    Serial.print(F("Free mem after  print = "));
+    Serial.println(ESP.getFreeHeap()); 
+#endif  
+
     return outputLen;
 }
 
 
-int LogChannel::out(const char* buff) {
+int LogChannel::out(char* buff) {
     return 1;
 }
 
@@ -108,7 +138,7 @@ LogCHSerial::LogCHSerial():LogChannel("serial") {
     
 }
 
-int LogCHSerial::out(const char* buff) {
+int LogCHSerial::out(char* buff) {
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_COMPILE_)     
     Serial.println(buff);
     return strlen(buff);

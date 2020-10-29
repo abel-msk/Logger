@@ -67,8 +67,8 @@ class LogFormat {
     LogFormat();
     int hasError();
     int parseFmt(String fmt);
-    const char* compile(const char* date, const char* name, LogLevel level, const char* msg);
-    const char* compile(const char* date, const char* name, const char* level, const char* msg);
+    char* compile(char* date, char* name, LogLevel level, const char* msg);
+    char* compile(char* date, char* name, const char* level, const char* msg);
 };
 
 
