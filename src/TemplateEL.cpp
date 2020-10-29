@@ -41,7 +41,7 @@ void TemplateEl::setText(const char* txt) {
 }
 
 char* TemplateEl::getText() {
-    return strdup(text);
+    return text;
 }
 
 void TemplateEl::setAlign(int al) {

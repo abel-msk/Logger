@@ -1,5 +1,5 @@
 {
-    "name": "Logger",
+    "name": "LogHUB",
     "version": "0.1.0",
     "description": "Multichanel logger finction with formatter and runtime filter.",
     "keywords": "log logging arduino atmega",

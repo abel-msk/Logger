@@ -1,17 +1,16 @@
-#ifndef LOGGER_H_
-#define LOGGER_H_
-
+#ifndef _LOG_HUB_H_
+#define _LOG_HUB_H_
 #include "LogFactory.h"
 
 
-class Logger {
+class LogHUB {
     private:
     char* clName;
 
     public:
-    Logger(const char* clName="Unknown");    
-    Logger(String clName);
-    ~Logger();
+    LogHUB(const char* clName="Unknown");    
+    LogHUB(String clName);
+    ~LogHUB();
 
     bool debug(String msg);
     bool error(String msg);

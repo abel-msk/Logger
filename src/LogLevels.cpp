@@ -16,6 +16,10 @@ const char* level2str(LogLevel level) {
     }
 }
 
+/**
+ *  Init available levels list
+ *  Set all lefels in default mode show=true
+ */
 LogLevels::LogLevels() {
     LevelDefaults* def =  new LevelDefaults();
     def->level = LogLevel::L_INFO;

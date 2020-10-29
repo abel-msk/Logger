@@ -5,7 +5,7 @@
  * 
  */
 LogFactory::LogFactory(bool useConsole) {
-    formatSrt = "%date% [%level%] %clname%: %msg%";
+    formatSrt = "%date% [%level5%] %clname%: %msg%";
 
     if (useConsole ) {
         LogChannel* ch = new LogCHSerial();

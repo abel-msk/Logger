@@ -181,9 +181,7 @@ char*  LogFormat::compile( char* date,  char*  className, const char* level, con
 #endif
             switch (el->getType()) {
                 case PLAIN:  
-                    txt =  el->getText();
-                    buff = appendStr(buff,txt);
-                    free((void*)txt); 
+                    buff = appendStr(buff,el->getText());
                     break;
                 case DATE: 
                     txt = el->getReplaced(date);

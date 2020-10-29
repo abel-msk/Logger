@@ -33,9 +33,9 @@ git clone https://github.com/abel-msk/BinTreeStore.git
 ### Base usage
 
 ```
-#include "Logger.h"
+#include "LogHUB.h"
 
-Logger logg("main");
+LogHUB logg("main");
 
 void setup() {
 
@@ -49,10 +49,10 @@ void loop() {
 ###  Change default  log message format
 
 ```
-#include "Logger.h"
+#include "LogHUB.h"
 
 logFactory.setChannelFormat("%date% [%level%] %clname%: %msg%");
-Logger logg("main");
+LogHUB logg("main");
 ```
 
 
@@ -71,7 +71,7 @@ where:
 ```
 #include "Logger.h"
 
-Logger logg("main");
+LogHUB logg("main");
 
 logFactory.setFilter("main",LogLevel::DEBUG,true);
 
