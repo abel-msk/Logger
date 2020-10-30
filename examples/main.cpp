@@ -34,12 +34,12 @@ class frame {
  
 int main(void) {
 
-    std::cout << "==============  Test 1 ==============" << std::endl;
+    std::cout << "==============  Test Tokenizer ==============" << std::endl;
 
 	frame *ctoken;
 	const char* token;
 
-	Tokenizer* tkz = new Tokenizer("%data% [%classname%]:%level% Final text");
+	Tokenizer* tkz = new Tokenizer("%data% [%classname10%]:%level% Final text");
 
     token=tkz->getToken('%');
 
@@ -61,7 +61,6 @@ int main(void) {
 		std::cout << "Got an error" << std::endl;
 	}
 
-
     SListIterator<frame*> it = sv->begin();
 
 	while (it.Valid()) {
@@ -76,7 +75,13 @@ int main(void) {
     delete tkz;
     std::cout << "==============  Test 2 ==============" << std::endl;
 
+    std::cout << "==============  Test Format ==============" << std::endl;
 
+    LogFormat formatter;
+    formatter.parseFmt("%date% [%levelL10%] %clname5%: %msg%");
+    std::cout << "Parse. RC=" << formatter.hasError() << std::endl;
+
+    std::cout << "==============  Test Filters ==============" << std::endl;
     FilterElementTest* tn1 = new FilterElementTest("a","a");
     tn1->key = "key";
     tn1->data = "data1";

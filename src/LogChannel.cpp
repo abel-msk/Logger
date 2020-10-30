@@ -48,7 +48,7 @@ void LogChannel::addClass(char* clName) {
     filter->addClass(clName);
 }
 
-void LogChannel::setFilter(char* clName, LogLevel level, bool show) {
+void LogChannel::setFilter(const char* clName, LogLevel level, bool show) {
     filter->setFilter(clName, level, show);
 }
 

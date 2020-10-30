@@ -27,7 +27,7 @@ class LogFactory {
     void setDefaultFilter(LogLevel level, bool value);
     void addClass(char* clName);
     int setChFilter(char* chName, char* clName, LogLevel level, bool isShow );
-    void setFilter(char* clName, LogLevel level, bool isShow );
+    void setFilter(const char* clName, LogLevel level, bool isShow );
 
     int print(char* clName, LogLevel level, const char* mesage);
 

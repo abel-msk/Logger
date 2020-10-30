@@ -121,7 +121,7 @@ int LogFactory::setChFilter(char* chName, char* clName, LogLevel level, bool isS
  * @param isShow fiter value. True - print mrssage in channel; False - do not print out
  * 
  */
-void LogFactory::setFilter(char* clName, LogLevel level, bool isShow ) {
+void LogFactory::setFilter(const char* clName, LogLevel level, bool isShow ) {
     LinkedList::iterator it = chList.begin();
     while (it.Valid()) {
         it.Item()->setFilter(clName,level,isShow);

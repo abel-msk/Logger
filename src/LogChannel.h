@@ -38,7 +38,7 @@ class LogChannel {
     virtual const char* getName();
     virtual void setFormat(const char* fmt);
     virtual void addClass(char* clName);
-    virtual void setFilter(char* clName, LogLevel level, bool show);
+    virtual void setFilter(const char* clName, LogLevel level, bool show);
     virtual bool doFilter(char* clName, LogLevel level);
     virtual char* formatTS();
     virtual int print(char* clName, LogLevel level, const char* msg);

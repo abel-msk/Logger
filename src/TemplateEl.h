@@ -9,9 +9,9 @@ enum tokenType {
     MSG
 };
 
-#define VAL_ALIGN_LEFT 1
-#define VAL_ALIGN_RIGHT 2
-#define VAL_ALIGN_CENTER 3
+#define VAL_ALLIGN_LEFT 1
+#define VAL_ALLIGN_RIGHT 2
+#define VAL_ALLIGN_CENTER 3
 
 
 class TemplateEl {
@@ -29,8 +29,10 @@ class TemplateEl {
     tokenType getType();
     void setText(const char* txt);
     char* getText();
-    void setAlign(int);
+    void setAllign(int);
+    int getAllign();
     void setLength(int);
+    int getLength();
     char* getReplaced(const char* subst);
 };
 

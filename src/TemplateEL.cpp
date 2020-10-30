@@ -13,14 +13,14 @@ TemplateEl::TemplateEl() {
     text = strdup("");    
 
     type = PLAIN;
-    align = VAL_ALIGN_LEFT;
+    align = VAL_ALLIGN_LEFT;
     maxLen=0;
 }
 
 TemplateEl::TemplateEl(tokenType t, const char* txt) {
     type = t;
     text = strdup(txt);
-    align = VAL_ALIGN_LEFT;
+    align = VAL_ALLIGN_LEFT;
 
 }
 
@@ -44,12 +44,21 @@ char* TemplateEl::getText() {
     return text;
 }
 
-void TemplateEl::setAlign(int al) {
+void TemplateEl::setAllign(int al) {
     align = al;
 }
 
+int TemplateEl::getAllign() {
+    return align;
+}
+
+
 void TemplateEl::setLength(int l) {
     maxLen = l;
+}
+
+int TemplateEl::getLength() {
+    return maxLen;
 }
 
 /*
@@ -77,21 +86,21 @@ char* TemplateEl::getReplaced(const char* subst) {
     else {
         if ( (resBuff=(char*)malloc(maxLen)) == 0) return nullptr;
 
-        if (( substLen > maxLen) && (align == VAL_ALIGN_LEFT)) {  // cut right part of string
+        if (( substLen > maxLen) && (align == VAL_ALLIGN_LEFT)) {  // cut right part of string
             strncpy(resBuff,source,maxLen);
         }
-        else if (( substLen > maxLen) && (align == VAL_ALIGN_RIGHT)) { // cut left part of string
+        else if (( substLen > maxLen) && (align == VAL_ALLIGN_RIGHT)) { // cut left part of string
             strncpy(resBuff,source+substLen-maxLen,maxLen);
         }
-        else if (( substLen < maxLen) && (align == VAL_ALIGN_LEFT)) { 
+        else if (( substLen < maxLen) && (align == VAL_ALLIGN_LEFT)) { 
             strncpy(resBuff,source,substLen);
             for (i = substLen ; i < maxLen; i++) resBuff[i] = ' ';
         }
-        else if (( substLen < maxLen) && (align == VAL_ALIGN_RIGHT)) { 
+        else if (( substLen < maxLen) && (align == VAL_ALLIGN_RIGHT)) { 
             for (i = 0; i < (maxLen-substLen); i++) resBuff[i] = ' ';
             strncpy(resBuff+i,source,substLen);
         }
-        else if (( substLen < maxLen) && (align == VAL_ALIGN_CENTER)) { 
+        else if (( substLen < maxLen) && (align == VAL_ALLIGN_CENTER)) { 
             for (i = 0; i < (maxLen-substLen)/2; i++) resBuff[i] = '.';
             strncpy(resBuff+i,source,substLen);
             i+=substLen;

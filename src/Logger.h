@@ -3,20 +3,26 @@
 #include "LogFactory.h"
 
 
-class LogHUB {
+class Logger {
     private:
-    char* clName;
+    bool isAdded = false;
+    char* clName = NULL; 
+    void init();
 
     public:
-    LogHUB(const char* clName="Unknown");    
-    LogHUB(String clName);
-    ~LogHUB();
+    Logger(const char* className);    
+    Logger(String className);
 
+    ~Logger();
+    const char* getName();
+    void setName(const char* cn);
     bool debug(String msg);
     bool error(String msg);
     bool info(String msg);
     bool warn(String msg);
     bool print(LogLevel level, String msg);
+
+
 };
 
 #endif

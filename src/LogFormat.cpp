@@ -3,6 +3,9 @@
 #ifdef __DEBUG_ESP_MEM_LEAK__
 #include <esp.h>
 #endif
+#ifdef __DEBUG_X64_GCC___
+#include <iostream>
+#endif
 // #include "FElement.h"
 
 
@@ -44,13 +47,19 @@ int LogFormat::hasError() {
 *    @param fmt message template
  */
 int LogFormat::parseFmt(String fmt) {
+
+    #ifdef __DEBUG_X64_GCC___
+    std::cout << "LogFormat:parseFmt.  Format=" <<  fmt << std::endl;
+    #endif
     Tokenizer tok(fmt.c_str());
     const char* text;
     TemplateEl* el;
     parseErr = 0;
 
     while ((text = tok.getToken(STR_TOK_DELIM)) != 0 ) {
-        
+        #ifdef __DEBUG_X64_GCC___
+        std::cout << "LogFormat:parseFmt.  Token=" <<  text << std::endl;
+        #endif
         if (strlen(text) > 0 ) {
             if ( strncmp(text,STR_TOK_DATE,strlen(STR_TOK_DATE)) == 0) {
                 el = getAttr(DATE,text,STR_TOK_DATE);
@@ -92,52 +101,65 @@ int LogFormat::parseFmt(String fmt) {
 *   
 */
 TemplateEl* LogFormat::getAttr(tokenType tType, const char* token, const char* key) {
+    
+    #ifdef __DEBUG_X64_GCC___
+    std::cout << "LogFormat:getAttr. Token="<< token  <<", Key=" <<  key << std::endl;
+    #endif
+    parseErr = 0;
     TemplateEl* el = new TemplateEl();
     el->setType(tType);
     char* attr = (char *)token+strlen(key);
+    el->setLength(0);
+    el->setAllign(VAL_ALLIGN_LEFT);
 
     //  Got end of string return default values
-    if ( *attr == 0) {
-        el->setAlign(VAL_ALIGN_LEFT);
-        el->setLength(0);
-        return el;
-    }
-    //  The char point to alligning
-    if (*attr == ALLIGN_LEFT_DEF ) {
-        el->setAlign(VAL_ALIGN_LEFT);
-        attr++;
-    }
-    else if (*attr == ALLIGN_RIGH_DEF ) {
-        el->setAlign(VAL_ALIGN_RIGHT);
-        attr++;
-    }
-    else if (*attr == ALLIGN_CENTER_DEF ) {
-        el->setAlign(VAL_ALIGN_CENTER);
-        attr++;
-    }
-    else if ((*attr < '0') ||  (*attr > '9')) {
-        parseErr = PARSE_ERR_INCORRECT_SIZE_ATTR;
-        return 0; //incorrect format
-    }
-    
-    if ( *attr == '0') {
-        el->setLength(0);
-        return el;
-    }
-    //  The digits set max field length
-    for (int offset = 0; attr[offset-1] != '0'; offset++) {
-        if ((attr[offset-1] < '0') || (attr[offset-1] > '9')) {
-            parseErr = PARSE_ERR_INCORRECT_ALLIGN_ATTR;
-            return 0;  //incorrect format
+    if ( *attr != '\x00') {
+        //  Got char addition char, check allign 
+        if (*attr == ALLIGN_LEFT_DEF ) {
+            el->setAllign(VAL_ALLIGN_LEFT);
+            attr++;
+        }
+        else if (*attr == ALLIGN_RIGH_DEF ) {
+            el->setAllign(VAL_ALLIGN_RIGHT);
+            attr++;
+        }
+        else if (*attr == ALLIGN_CENTER_DEF ) {
+            el->setAllign(VAL_ALLIGN_CENTER);
+            attr++;
         }
     }
-    
-    #ifdef ARDUINO_ARCH
-        String lenStr(attr);
-        el->setLength(lenStr.toInt());
-    #else 
-        el->setLength(std::stoi(attr));
-    #endif 
+
+    if (( *attr != '\x00') && ((*attr < '0') ||  (*attr > '9'))) {
+        #ifdef __DEBUG_X64_GCC___
+        std::cout << "LogFormat:getAttr. Check length="<< *attr  << std::endl;
+        #endif
+        parseErr = PARSE_ERR_INCORRECT_ALLIGN_ATTR;
+    } else if (*attr != '\x00'){
+
+        //  The digits set max field length
+        for (int offset = 0; attr[offset] != '\x00'; offset++) {
+            #ifdef __DEBUG_X64_GCC___
+            std::cout << "LogFormat:getAttr. Got Char="<< attr[offset] << std::endl;
+            #endif
+            if ((attr[offset] < '0') || (attr[offset] > '9')) {
+                parseErr = PARSE_ERR_INCORRECT_SIZE_ATTR;
+                break;
+            }
+        }
+        if (parseErr == 0 ) {
+            #ifdef ARDUINO_ARCH
+            String lenStr(attr);
+            el->setLength(lenStr.toInt());
+            #else 
+            el->setLength(std::stoi(attr));
+            #endif 
+        }
+
+    }
+          
+    #ifdef __DEBUG_X64_GCC___
+    std::cout << "LogFormat:getAttr. Attr allign="<< el->getAllign()  << ", Length=" << el->getLength() << std::endl;
+    #endif
 
     return el;
 }
@@ -147,8 +169,10 @@ char* LogFormat::compile( char* date,  char*  className, LogLevel level, const c
     return compile(date, className, level2str(level), msg);
 }
 
+
 char*  LogFormat::compile( char* date,  char*  className, const char* level, const char*  msg) 
 {
+
 #ifdef __DEBUG_ESP_MEM_LEAK__    
     Serial.print(F("Free mem before compile = "));
     Serial.println(ESP.getFreeHeap());  

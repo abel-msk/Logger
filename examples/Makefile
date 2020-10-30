@@ -1,6 +1,6 @@
 
 СХХ=g++
-CXXFLAGS= -g -std=c++11 
+CXXFLAGS= -g -std=c++11  -D__DEBUG_X64_GCC___
 #CXXFLAGS= -g 
 
 BUILDDIR=build
